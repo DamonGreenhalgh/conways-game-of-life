@@ -4,12 +4,13 @@
  * @author Damon Greenhalgh
  */
 
-
 public class GameBoard {
     
+    // Fields
     private Node[][] board; 
     private int size;
 
+    // Constructor
     public GameBoard(int size) { 
         this.size = size; 
         board = new Node[size][size]; 
@@ -20,8 +21,25 @@ public class GameBoard {
         }
     }
 
+    // Methods
     public void setNode(int i, int j, boolean state) { board[i][j].setState(state); }
 
+    /**
+     * Clear
+     * This method clears the board, sets all nodes to false(dead).
+     */
+    public void clear() {
+        for(int i = 0; i < size; i++) {
+            for(int j = 0; j < size; j++) {
+                board[i][j].setState(false);
+            }
+        }
+    }
+
+    /**
+     * Display
+     * This method displays the gameboard. (cli currently)
+     */
     public void display() {
         for(int i  = 0; i < size; i++) {
             for(int j = 0; j < size; j++) {
@@ -32,6 +50,10 @@ public class GameBoard {
         System.out.println("\n");
     }
 
+    /**
+     * Next
+     * This method generates the next iteration of the game.
+     */
     public void next() {
 
         // create new temporary board that is a clone of the game board
