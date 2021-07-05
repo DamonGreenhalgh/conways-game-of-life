@@ -22,7 +22,9 @@ public class GameBoard {
     }
 
     // Methods
+    public Node getNode(int i, int j) { return board[i][j]; }
     public void setNode(int i, int j, boolean state) { board[i][j].setState(state); }
+    public int getSize() { return size; }
 
     /**
      * Clear
@@ -69,7 +71,7 @@ public class GameBoard {
                 
                 // define the sum and the points to check around the node
                 int sum = 0;
-                int[][] coords = {
+                int[][] points = {
                     {i - 1, j - 1}, 
                     {i - 1, j}, 
                     {i - 1, j + 1}, 
@@ -81,9 +83,9 @@ public class GameBoard {
                 };
 
                 // determine the number of alive neighbours around the node 
-                for(int k = 0; k < coords.length; k++) {
+                for(int k = 0; k < points.length; k++) {
                     try {
-                        if(board[coords[k][0]][coords[k][1]].getState()) {
+                        if(board[points[k][0]][points[k][1]].getState()) {
                             sum++;
                         }
                     } catch(Exception ex) {
@@ -103,7 +105,13 @@ public class GameBoard {
                 }
             }
         }
-        board = tmp;
+        
+        // overwrite the original values
+        for(int i = 0; i < size; i++) {
+            for(int j = 0; j < size; j++) {
+                board[i][j].setState(tmp[i][j].getState());
+            }
+        }
     }
 
 }

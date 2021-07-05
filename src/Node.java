@@ -6,11 +6,13 @@
  * @author Damon Greenhalgh
  */
 
-public class Node {
+import javax.swing.JButton;
+
+public class Node extends JButton{
 
     // Fields
     private boolean state = false;    
-
+    
     // Constructor
     public Node() {};
 
