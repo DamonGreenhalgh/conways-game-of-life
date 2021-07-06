@@ -19,7 +19,7 @@ public class Run {
     
         System.out.println("Welcome to Conway's Game of Life!");
         System.out.println("Enter the size of the grid: ");
-        board = new GameBoard(scanner.nextInt());
+        board = new GameBoard(scanner.nextInt(), scanner.nextInt());
         
         while(game) {
             try {

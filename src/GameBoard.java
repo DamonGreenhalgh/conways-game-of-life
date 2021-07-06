@@ -8,15 +8,17 @@ public class GameBoard {
     
     // Fields
     private Node[][] board; 
-    private int size;
+    private int rows, columns;
+
 
     // Constructor
-    public GameBoard(int size) { 
-        this.size = size; 
-        board = new Node[size][size]; 
-        for(int i = 0; i < size; i++) {
-            for(int j = 0; j < size; j++) {
-                board[i][j] = new Node();
+    public GameBoard(int rows, int columns) { 
+        this.rows = rows;
+        this.columns = columns;
+        board = new Node[rows][columns]; 
+        for(int i = 0; i < rows; i++) {
+            for(int j = 0; j < columns; j++) {
+                board[i][j] = new Node(new int[] {i, j});
             }
         }
     }
@@ -24,15 +26,16 @@ public class GameBoard {
     // Methods
     public Node getNode(int i, int j) { return board[i][j]; }
     public void setNode(int i, int j, boolean state) { board[i][j].setState(state); }
-    public int getSize() { return size; }
+    public int getRows() { return rows; }
+    public int getColumns() { return columns; }
 
     /**
      * Clear
      * This method clears the board, sets all nodes to false(dead).
      */
     public void clear() {
-        for(int i = 0; i < size; i++) {
-            for(int j = 0; j < size; j++) {
+        for(int i = 0; i < rows; i++) {
+            for(int j = 0; j < columns; j++) {
                 board[i][j].setState(false);
             }
         }
@@ -43,8 +46,8 @@ public class GameBoard {
      * This method displays the gameboard. (cli currently)
      */
     public void display() {
-        for(int i  = 0; i < size; i++) {
-            for(int j = 0; j < size; j++) {
+        for(int i  = 0; i < rows; i++) {
+            for(int j = 0; j < columns; j++) {
                 System.out.printf("%s    ", board[i][j]);
             }
             System.out.println("\n");
@@ -59,14 +62,14 @@ public class GameBoard {
     public void next() {
 
         // create new temporary board that is a clone of the game board
-        Node[][] tmp = new Node[size][size];
+        Node[][] tmp = new Node[rows][columns];
 
         // iterate through each node on the game board.
-        for(int i = 0; i < size; i++) {
-            for(int j = 0; j < size; j++) {
+        for(int i = 0; i < rows; i++) {
+            for(int j = 0; j < columns; j++) {
 
                 // replicate original gameboard node
-                tmp[i][j] = new Node();
+                tmp[i][j] = new Node(new int[] {i, j});
                 tmp[i][j].setState(board[i][j].getState());
                 
                 // define the sum and the points to check around the node
@@ -107,8 +110,8 @@ public class GameBoard {
         }
         
         // overwrite the original values
-        for(int i = 0; i < size; i++) {
-            for(int j = 0; j < size; j++) {
+        for(int i = 0; i < rows; i++) {
+            for(int j = 0; j < columns; j++) {
                 board[i][j].setState(tmp[i][j].getState());
             }
         }

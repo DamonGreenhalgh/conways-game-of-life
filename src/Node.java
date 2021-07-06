@@ -12,9 +12,10 @@ public class Node extends JButton{
 
     // Fields
     private boolean state = false;    
-    
+    private int[] coords; 
+
     // Constructor
-    public Node() {};
+    public Node(int[] coords) { this.coords = coords; }
 
     // Methods
     public String toString() {
@@ -27,6 +28,7 @@ public class Node extends JButton{
         return str;
     }
     public boolean getState() { return state; }
-    public void setState(boolean state) {this.state = state; };
+    public void setState(boolean state) { this.state = state; };
+    public int[] getCoords() { return coords; }
 
  }
