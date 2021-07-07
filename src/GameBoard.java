@@ -1,3 +1,5 @@
+import java.util.Random;
+
 /**
  * @class GameBoard
  * @description This is the game board class.
@@ -9,7 +11,6 @@ public class GameBoard {
     // Fields
     private Node[][] board; 
     private int rows, columns;
-
 
     // Constructor
     public GameBoard(int rows, int columns) { 
@@ -37,6 +38,27 @@ public class GameBoard {
         for(int i = 0; i < rows; i++) {
             for(int j = 0; j < columns; j++) {
                 board[i][j].setState(false);
+            }
+        }
+    }
+
+    public void fill() {
+        for(int i = 0; i < rows; i++) {
+            for(int j = 0; j < columns; j++) {
+                board[i][j].setState(true);
+            }
+        }
+    }
+
+    public void random() {
+        Random random = new Random();
+        for(int i = 0; i < rows; i++) {
+            for(int j = 0; j < columns; j++) {
+                if(random.nextBoolean()) {
+                    board[i][j].setState(true);
+                } else {
+                    board[i][j].setState(false);
+                }
             }
         }
     }
@@ -116,5 +138,4 @@ public class GameBoard {
             }
         }
     }
-
 }
