@@ -1,10 +1,11 @@
 /**
  * @class GUI
- * @description This class handles all the Java Swing GUI elements.
+ * @description This class handles all the Java Swing GUI elements. Acts as the 
+ * font end display for the game.
  * @author Damon Greenhalgh
  */
 
- // DEPENDENCIES
+ // dependencies
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -13,6 +14,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class GUI{
+
+    // Fields
     private JFrame frame;
     private JPanel titlePanel, gridPanel, optionsPanel, sliderPanel;
     private JLabel lblNumIterations;
@@ -32,9 +35,8 @@ public class GUI{
      * Used to instantiate gui components.
      */
     public GUI() {
-        // FIELDS
         // setup logical board
-        scale = 1;
+        scale = 2;   
         rows = 72 / scale;
         columns = 128 / scale;
         board = new GameBoard(rows, columns);
@@ -42,8 +44,8 @@ public class GUI{
         // setup time delay(ms)
         delay = 400;   
 
-        // setup grid active color
-        File gradientFile = new File("gradient-4.png");
+        // setup grid color map
+        File gradientFile = new File("bin/gradient.png");
         colorScanner = ColorScanner.getColorScanner();
         colorScanner.scan(gradientFile, scale);
         colorMap = colorScanner.getColorMap();
@@ -62,10 +64,11 @@ public class GUI{
 
         // setup frame
         frame = new JFrame(); 
-        frame.setIconImage(new ImageIcon("icon.png").getImage());
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setTitle("Conway's Game of Life");
         frame.setSize(1600, 950);
+        frame.setLocationRelativeTo(null);
+        frame.setIconImage(new ImageIcon("bin/icon.png").getImage());
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         // setup panels
         titlePanel = new JPanel(new GridLayout(3, 1));
@@ -86,7 +89,6 @@ public class GUI{
         // set up grid components
         for(int i = 0; i < rows; i++) {
             for(int j = 0; j < columns; j++) {
-                // grid details
                 Node node = board.getNode(i, j);
                 node.addActionListener(new MyGridListener());
                 node.setBackground(DARKBLUE);
@@ -96,7 +98,7 @@ public class GUI{
         }
 
         // setup options components
-        // start/stop/continue button, used to start/stop the simulation
+        // start button, used to start/stop/continue the simulation
         btnStart = new JButton("START");
         btnStart.setPreferredSize(new Dimension(200, 30));
         btnStart.setFont(FONT);
@@ -131,6 +133,7 @@ public class GUI{
         btnClear.setBorderPainted(false);
         btnClear.addActionListener(new MyClearListener());
 
+        // step button, used to generate the next step of the algorithm
         btnStep = new JButton("STEP");
         btnStep.setPreferredSize(new Dimension(100, 30));
         btnStep.setFont(FONT);
@@ -139,6 +142,7 @@ public class GUI{
         btnStep.setBorderPainted(false);
         btnStep.addActionListener(new MyStepListener());
 
+        // random button, randomzes each node on the board
         btnRandom = new JButton("RANDOM");
         btnRandom.setPreferredSize(new Dimension(200, 30));
         btnRandom.setFont(FONT);
@@ -148,12 +152,14 @@ public class GUI{
         btnRandom.addActionListener(new MyRandomListener());
 
         // speed slider, used to change the delay of each new iteration
+        // speed label
         JLabel lblSpeed = new JLabel("SPEED: 1x");
         lblSpeed.setPreferredSize(new Dimension(200, 10));
         lblSpeed.setFont(FONT);
         lblSpeed.setForeground(PURPLE);
         lblSpeed.setHorizontalAlignment(0);
 
+        // speed slider
         JSlider sdrSpeed = new JSlider(1, 8);
         sdrSpeed.setBackground(DARKESTBLUE);
         sdrSpeed.setMinorTickSpacing(1);
@@ -176,7 +182,7 @@ public class GUI{
         lblNumIterations.setForeground(PURPLE);
         lblNumIterations.setHorizontalAlignment(0);
 
-        // add options components to optionPanel
+        // add options components to options panel
         optionsPanel.add(btnStart);
         optionsPanel.add(btnStep);
         optionsPanel.add(btnClear);
@@ -184,20 +190,24 @@ public class GUI{
         optionsPanel.add(sliderPanel);
         optionsPanel.add(lblNumIterations);
 
-        // add game components to game panel
+        // add panels to the frame
         frame.add(gridPanel, BorderLayout.CENTER);
         frame.add(optionsPanel, BorderLayout.SOUTH);
 
         frame.setVisible(true); 
     }
 
+    /**
+     * Update
+     * This method updates each node to display the correct status.
+     */
     public void update() {
         for(int i = 0; i < rows; i++) {
             for(int j = 0; j < columns; j++) {
                 Node node = board.getNode(i, j);
-                if(node.getState()) {
+                if(node.getState()) {    // alive
                     node.setBackground(colorMap[i][j]);
-                } else {
+                } else {                 // dead
                     node.setBackground(DARKBLUE);
                 }
             }

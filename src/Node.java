@@ -1,8 +1,7 @@
 /**
  * @class Node
- * @description This is the node class, used to instantiate a node object that 
- * represents nodes on the gameboard. The class has one field `status` that represents
- * the current state of the node. true for alive and false for dead.
+ * @description This class defines the node object. An extension of JButton,
+ * used as the both a display component and logical object for the gameboard class.
  * @author Damon Greenhalgh
  */
 

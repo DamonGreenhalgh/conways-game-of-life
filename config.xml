@@ -13,7 +13,7 @@
   <stayAlive>false</stayAlive>
   <restartOnCrash>false</restartOnCrash>
   <manifest></manifest>
-  <icon>C:\Users\Damon\Documents\GitHub\conways-game-of-life\icon.ico</icon>
+  <icon>C:\Users\Damon\Documents\GitHub\conways-game-of-life\bin\icon.ico</icon>
   <jre>
     <path></path>
     <bundledJre64Bit>false</bundledJre64Bit>
