@@ -1,7 +1,7 @@
 # **Conway's Game of Life** 
 A fun little application that runs **Conway's Game of Life**.  
 
-![alt text](https://github.com/DamonGreenhalgh/conways-game-of-life/blob/main/bin/icon.png?raw=true) 
+![alt text](https://github.com/DamonGreenhalgh/conways-game-of-life-app/blob/main/design/icon.png?raw=true) 
 
 ## Rules
 How does the game work? There exists a grid where each node on the grid is one of two states, alive or dead. You can manipulate these states
