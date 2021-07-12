@@ -48,4 +48,4 @@ Open the directory you want to **clone** the repository in and run the following
 Then **run** the executable **"Conway's Game of Life.exe"**, and **enjoy!**  
 
 ## Requirements
-Requires Windows and Java 8 JRE.
+Requires Windows and JDK 16+.
