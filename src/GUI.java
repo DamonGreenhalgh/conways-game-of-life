@@ -45,7 +45,7 @@ public class GUI{
         delay = 400;   
 
         // setup grid color map
-        File gradientFile = new File("bin/gradient.png");
+        File gradientFile = new File("design/gradient.png");
         colorScanner = ColorScanner.getColorScanner();
         colorScanner.scan(gradientFile, scale);
         colorMap = colorScanner.getColorMap();
@@ -67,7 +67,7 @@ public class GUI{
         frame.setTitle("Conway's Game of Life");
         frame.setSize(1600, 980);
         frame.setLocationRelativeTo(null);
-        frame.setIconImage(new ImageIcon("bin/icon.png").getImage());
+        frame.setIconImage(new ImageIcon("design/icon.png").getImage());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         // setup panels
