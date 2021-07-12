@@ -17,7 +17,7 @@ public class GUI{
 
     // Fields
     private JFrame frame;
-    private JPanel titlePanel, gridPanel, optionsPanel, sliderPanel;
+    private JPanel gridPanel, optionsPanel, sliderPanel;
     private JLabel lblNumIterations;
     private JButton btnStart, btnClear, btnStep, btnRandom;
     private Font FONT;
@@ -65,18 +65,14 @@ public class GUI{
         // setup frame
         frame = new JFrame(); 
         frame.setTitle("Conway's Game of Life");
-        frame.setSize(1600, 950);
+        frame.setSize(1600, 980);
         frame.setLocationRelativeTo(null);
         frame.setIconImage(new ImageIcon("bin/icon.png").getImage());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         // setup panels
-        titlePanel = new JPanel(new GridLayout(3, 1));
-        titlePanel.setPreferredSize(new Dimension(1600, 950));
-        titlePanel.setBackground(DARKESTBLUE);
-
         gridPanel = new JPanel(new GridLayout(rows, columns));
-        gridPanel.setPreferredSize(new Dimension(1400, 900));
+        gridPanel.setPreferredSize(new Dimension(1600, 900));
         gridPanel.setBackground(DARKESTBLUE);
 
         optionsPanel = new JPanel(new FlowLayout());
