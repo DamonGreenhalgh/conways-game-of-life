@@ -66,12 +66,51 @@ public class GameBoard {
     }
 
     /**
+     * Preset
+     * This method draws a preset structure based on the parameter BrushType.
+     * 
+     * @param preset    the structure to draw.
+     * @param brushState    true for paint, false for erase
+     * @param row           the row to start
+     * @param column        the column to start
+     */
+    public void preset(BrushType pt, boolean brushState, int row, int column) {
+        int[][] structure = pt.getStructure();
+        int structureRows = structure.length;
+        int structureColumns = structure[0].length;
+        Node node;
+
+        try {
+
+        } catch(Exception ex) {};
+        for(int i = 0; i < structureRows; i++){
+            for(int j = 0; j < structureColumns; j++) {
+                try {
+                    node = nodes[i + row][j + column];
+                    if(brushState) {
+                        if(structure[i][j] == 1 && !node.getState()) {
+                            node.setState(true);
+                        }
+                    } else {
+                        if(structure[i][j] == 1 && node.getState()) {
+                            node.setState(false);
+                        }
+                    }
+                } catch(Exception ex) {};
+            }
+        }
+    }
+
+    /**
      * Next
      * This method generates the next iteration of the game.
+     * 
+     * @return boolean    false if the game has halted, true if it has.
      */
-    public void next() {
+    public boolean next() {
 
         int sum;
+        int numChanges = 0;    // used to check if the game has halted
 
         // create new temporary board that is a clone of the game board
         Node[][] tmp = new Node[rows][columns];
@@ -112,10 +151,12 @@ public class GameBoard {
                 if(nodes[i][j].getState()) {          // if the node is alive
                     if(sum < 2 || sum > 3) {          // sum < 2, dies of loneliness
                         tmp[i][j].setState(false);    // sum > 3, dies of overcrowding
+                        numChanges++;
                     }
                 } else {                              // if the node is dead
                     if(sum == 3) {                    // sum == 3, lives due to repopulation
                         tmp[i][j].setState(true);  
+                        numChanges++;
                     }
                 }
             }
@@ -127,5 +168,10 @@ public class GameBoard {
                 nodes[i][j].setState(tmp[i][j].getState());
             }
         }
+
+        if(numChanges == 0) {
+            return true;
+        }
+        return false;
     }
 }

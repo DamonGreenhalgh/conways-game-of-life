@@ -18,18 +18,21 @@ public class GUI{
     // Fields
     private JFrame frame;
     private JPanel gridPanel, optionsPanel, sliderPanel;
-    private JLabel lblNumIterations, lblSpeed;
-    private JButton btnStart, btnClear, btnStep, btnRandom;
+    private JLabel lblNumIterations, lblSpeed, lblTheme;
+    private JButton btnStart, btnReset, btnStep, btnRandom, btnBrush;
     private JSlider sdrSpeed;
-    private JComboBox<ThemeType> cmbTheme;
+    private JComboBox<ThemeType> cmbTheme; 
+    private JComboBox<BrushType> cmbBrush;
     private Font FONT;
     private GameBoard board;
     private ColorScanner colorScanner;
     private Color[][] colorMap;
-    private Color FG, BG, DARKBLUE, DARKESTBLUE, GREEN, RED, ORANGE, PINK, PURPLE, OFFWHITE, WHITE; 
+    private Color fgColor, bgColor, DARKBLUE, DARKESTBLUE, GREEN, RED, ORANGE, PURPLE, OFFWHITE, WHITE; 
     private Timer timer;
+    private File gradientFile;
+    private BrushType brush;
     private int rows, columns, scale, numIterations, delay; 
-    private boolean timerState;
+    private boolean timerState, brushState;
 
 
     /**
@@ -47,10 +50,7 @@ public class GUI{
         delay = 400;   
 
         // setup grid color map
-        File gradientFile = new File("design/gradient.png");
         colorScanner = ColorScanner.getColorScanner();
-        colorScanner.scan(gradientFile, scale);
-        colorMap = colorScanner.getColorMap();
         
         // setup preset colors
         DARKBLUE = new Color(36, 41, 46);
@@ -61,10 +61,9 @@ public class GUI{
         RED = new Color(255, 94, 81);
         ORANGE = new Color(255, 178, 67);
         PURPLE = new Color(129, 67, 255);
-        PINK = new Color(219, 51, 255);
 
-        FG = DARKESTBLUE;
-        BG = DARKBLUE;
+        fgColor = DARKESTBLUE;
+        bgColor = DARKBLUE;
 
         // setup font
         FONT = new Font("Arial", Font.BOLD, 15);
@@ -100,7 +99,6 @@ public class GUI{
         btnStart = new JButton("START");
         btnStart.setPreferredSize(new Dimension(200, 30));
         btnStart.setFont(FONT);
-        btnStart.setBackground(GREEN);
         btnStart.setBorderPainted(false);
         timer = new Timer(delay, new MyStepListener());
         timerState = true;
@@ -121,36 +119,64 @@ public class GUI{
             }
         });
         
-        // clear button, used to clear the board and reset the number of iterations
-        btnClear = new JButton("CLEAR");
-        btnClear.setPreferredSize(new Dimension(100, 30));
-        btnClear.setFont(FONT);
-        btnClear.setBackground(PURPLE);
-        btnClear.setBorderPainted(false);
-        btnClear.addActionListener(new MyClearListener());
+        // reset button, used to clear the board and reset the number of iterations
+        btnReset = new JButton("RESET");
+        btnReset.setPreferredSize(new Dimension(100, 30));
+        btnReset.setFont(FONT);
+        btnReset.setBorderPainted(false);
+        btnReset.addActionListener(new MyClearListener());
 
         // step button, used to generate the next step of the algorithm
         btnStep = new JButton("STEP");
         btnStep.setPreferredSize(new Dimension(100, 30));
         btnStep.setFont(FONT);
-        btnStep.setBackground(PURPLE);
         btnStep.setBorderPainted(false);
         btnStep.addActionListener(new MyStepListener());
 
         // random button, randomzes each node on the board
         btnRandom = new JButton("RANDOM");
-        btnRandom.setPreferredSize(new Dimension(200, 30));
+        btnRandom.setPreferredSize(new Dimension(150, 30));
         btnRandom.setFont(FONT);
-        btnRandom.setBackground(PINK);
         btnRandom.setBorderPainted(false);
         btnRandom.addActionListener(new MyRandomListener());
+
+        // brush/eraser button, used to swap between brush mode and eraser mode
+        brushState = true;
+        brush = BrushType.SINGLE;
+        btnBrush = new JButton("BRUSH");
+        btnBrush.setPreferredSize(new Dimension(120, 30));
+        btnBrush.setFont(FONT);
+        btnBrush.setBorderPainted(false);
+        btnBrush.addActionListener(new AbstractAction(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(brushState) {
+                    brushState = false;
+                    btnBrush.setText("ERASER");
+                } else {
+                    brushState = true;
+                    btnBrush.setText("BRUSH");
+                }
+            }
+        });
+
+        // preset combobox, draws preset structure on the grid
+        cmbBrush = new JComboBox<BrushType>(BrushType.values());
+        cmbBrush.setFont(FONT);
+        cmbBrush.setForeground(PURPLE);
+        cmbBrush.addActionListener(new AbstractAction(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                @SuppressWarnings("unchecked") JComboBox<BrushType> box = (JComboBox<BrushType>)e.getSource();
+                brush = (BrushType)box.getSelectedItem();
+            }
+        });
 
         // speed slider, used to change the delay of each new iteration
         // speed label
         lblSpeed = new JLabel("SPEED: 1x");
         lblSpeed.setPreferredSize(new Dimension(200, 10));
         lblSpeed.setFont(FONT);
-        lblSpeed.setForeground(PURPLE);
         lblSpeed.setHorizontalAlignment(0);
 
         // speed slider
@@ -159,7 +185,7 @@ public class GUI{
         sdrSpeed.addChangeListener(new ChangeListener(){
             public void stateChanged(ChangeEvent e) {
                 delay = 100 * Math.abs(sdrSpeed.getValue() - 8);
-                timer.setDelay(Math.max(delay, 0));
+                timer.setDelay(Math.max(delay, 100));
                 lblSpeed.setText("Speed: " + 250 * sdrSpeed.getValue() / 1000.0 + "x");
             }
         });
@@ -175,9 +201,15 @@ public class GUI{
         lblNumIterations.setForeground(PURPLE);
         lblNumIterations.setHorizontalAlignment(0);
 
+        //theme label
+        lblTheme = new JLabel("THEME: ");
+        lblTheme.setPreferredSize(new Dimension(70, 30));
+        lblTheme.setFont(FONT);
+        
         // theme combobox, used to change themes for the application
-        cmbTheme = new JComboBox<>(ThemeType.values());
+        cmbTheme = new JComboBox<ThemeType>(ThemeType.values());
         cmbTheme.setFont(FONT);
+        cmbTheme.setForeground(PURPLE);
         cmbTheme.addActionListener(new AbstractAction(){
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -193,10 +225,13 @@ public class GUI{
         // add options components to options panel
         optionsPanel.add(btnStart);
         optionsPanel.add(btnStep);
-        optionsPanel.add(btnClear);
+        optionsPanel.add(btnReset);
         optionsPanel.add(btnRandom);
+        optionsPanel.add(btnBrush);
+        optionsPanel.add(cmbBrush);
         optionsPanel.add(sliderPanel);
         optionsPanel.add(lblNumIterations);
+        optionsPanel.add(lblTheme);
         optionsPanel.add(cmbTheme);
 
         // add panels to the frame
@@ -208,7 +243,7 @@ public class GUI{
 
     /**
      * Update
-     * This method updates each node to display the correct status.
+     * This method updates each node to display the correct color.
      */
     public void update() {
         for(int i = 0; i < rows; i++) {
@@ -217,7 +252,7 @@ public class GUI{
                 if(node.getState()) {    // alive
                     node.setBackground(colorMap[i][j]);
                 } else {                 // dead
-                    node.setBackground(BG);
+                    node.setBackground(bgColor);
                 }
             }
         }
@@ -232,39 +267,79 @@ public class GUI{
      */
     public void changeTheme(ThemeType theme) {
 
-        // set foreground and background color
+        // set foreground and background colors
         switch (theme) {
             case DARK: {
                 // dark theme
-                FG = DARKESTBLUE;
-                BG = DARKBLUE;
+                fgColor = DARKESTBLUE;
+                bgColor = DARKBLUE;
+                gradientFile = new File("design/gradient-dark.png");
                 break;
             } case LIGHT: {
                 // light theme
-                FG = WHITE;
-                BG = OFFWHITE;
+                fgColor = WHITE;
+                bgColor = OFFWHITE;
+                GREEN = new Color(11, 206, 112);
+                gradientFile = new File("design/gradient-light.png");
+                break;
+            } case DEFAULT: { // fix this later
+                // light theme
+                fgColor = WHITE;
+                bgColor = OFFWHITE;
+                GREEN = new Color(11, 206, 112);
+                gradientFile = new File("design/gradient-light.png");
                 break;
             }
         }
 
-        // edit component color
-        gridPanel.setBackground(FG);
-        optionsPanel.setBackground(FG);
-        sliderPanel.setBackground(FG);
-        sdrSpeed.setBackground(FG);
-        btnStart.setForeground(FG);
-        btnStep.setForeground(FG);
-        btnClear.setForeground(FG);
-        btnRandom.setForeground(FG);
+        // generate color map for background
+        colorScanner.scan(gradientFile, scale);
+        colorMap = colorScanner.getColorMap();
 
-        // edit node border color
+        // edit component colors
+        gridPanel.setBackground(fgColor);
+        optionsPanel.setBackground(fgColor);
+        sliderPanel.setBackground(fgColor);
+
+        btnStart.setBackground(GREEN);
+        btnStart.setForeground(fgColor);
+
+        btnStep.setBackground(PURPLE);
+        btnStep.setForeground(fgColor);
+        
+        btnReset.setBackground(PURPLE);
+        btnReset.setForeground(fgColor);
+
+        btnRandom.setBackground(PURPLE);
+        btnRandom.setForeground(fgColor);
+
+        lblSpeed.setForeground(PURPLE);
+        sdrSpeed.setBackground(fgColor);
+
+        btnBrush.setBackground(PURPLE);
+        btnBrush.setForeground(fgColor);
+
+        lblTheme.setBackground(bgColor);
+        lblTheme.setForeground(PURPLE);
+        
+        // edit node colors
         for(int i = 0; i < rows; i++) {
             for(int j = 0; j < columns; j++) {
                 Node node = board.getNode(i, j);
-                node.setBackground(BG);
-                node.setBorder(BorderFactory.createLineBorder(FG, 1));
+                node.setBorder(BorderFactory.createLineBorder(fgColor, 1));
+                if(node.getState()) {
+                    node.setBackground(colorMap[i][j]);
+                } else {
+                    node.setBackground(bgColor);
+                }
             }
         }
+    }
+
+    public void drawPreset(BrushType pt, int row, int column) {
+        board.clear();
+        board.preset(pt, brushState, row, column);
+        update();
     }
 
     /**
@@ -288,10 +363,33 @@ public class GUI{
     private class MyStepListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            board.next();
+            boolean deadLocked = board.next();
             update();
             numIterations++;
-            lblNumIterations.setText("" + numIterations);   
+            lblNumIterations.setText("" + numIterations);
+            
+            // occurs when the game hits a static state where the need of incrementing 
+            // numIterations becomes redundant.
+            if(deadLocked) {
+                timer.stop();
+                timerState = true;
+
+                // disable buttons
+                btnStart.setEnabled(false);
+                btnStep.setEnabled(false);
+                btnRandom.setEnabled(false);
+                btnBrush.setEnabled(false);
+
+                // style
+                btnStart.setText("CONTINUE");
+                btnStart.setBackground(bgColor);
+                btnStep.setBackground(bgColor);
+                btnRandom.setBackground(bgColor);
+                btnBrush.setBackground(bgColor);
+
+                // popup to display number of iterations
+                // ?
+            }
         }
     }
 
@@ -306,9 +404,20 @@ public class GUI{
             update();
             timer.stop();
             timerState = true;
+            numIterations = 0;
+
+            // enable buttons
+            btnStart.setEnabled(true);
+            btnStep.setEnabled(true);
+            btnRandom.setEnabled(true);
+            btnBrush.setEnabled(true);
+
+            // style
             btnStart.setText("START");
             btnStart.setBackground(GREEN);
-            numIterations = 0;
+            btnStep.setBackground(PURPLE);
+            btnRandom.setBackground(PURPLE);
+            btnBrush.setBackground(PURPLE);
             lblNumIterations.setText("" + numIterations);
         }
     }
@@ -322,14 +431,10 @@ public class GUI{
         @Override
         public void actionPerformed(ActionEvent e) {
             Node node = (Node) e.getSource();
-            if(node.getState() == false) {
-                node.setState(true);
-                int[] coords = node.getCoords();
-                node.setBackground(colorMap[coords[0]][coords[1]]);
-            } else {
-                node.setState(false);
-                node.setBackground(BG);
-            }
+            int[] coords = node.getCoords();
+            board.preset(brush, brushState, coords[0], coords[1]);
+            update();
+            
         }
     }
 }
