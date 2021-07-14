@@ -27,18 +27,18 @@ by simply clicking on the node. In the next iteration the node will either live 
 | ![alt text](https://github.com/DamonGreenhalgh/conways-game-of-life-app/blob/main/design/press-6.PNG?raw=true) | ![alt text](https://github.com/DamonGreenhalgh/conways-game-of-life-app/blob/main/design/press-7.PNG?raw=true) |
 
 ## Features
-Current features include:
+**Current Features:**
 
 * Basic functionality of the game.
-* **Random** generation of cells on the gameboard.
-* **Speed** control over each new iteration.
+* Random generation of cells on the gameboard.
+* Control over the delay between each new iteration.
+* Themes
+* Preset Structures as brushes and erasers
 
-Upcoming features:
+**Upcoming Features:**
 
-* **Themes**
-* **Preset Structures**
-* **Scaling**
-
+* Optimization
+* More Themes and Presets
  
 ## Installation
 Open the directory you want to **clone** the repository in and run the following line in **Git Bash**,  
