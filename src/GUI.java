@@ -19,7 +19,7 @@ public class GUI{
     private JFrame frame;
     private JPanel gridPanel, optionsPanel, sliderPanel;
     private JLabel lblNumIterations, lblSpeed, lblTheme;
-    private JButton btnStart, btnReset, btnStep, btnRandom, btnBrush;
+    private JButton btnStart, btnReset, btnStep, btnRandom, btnBrush, btnQuit;
     private JSlider sdrSpeed;
     private JComboBox<ThemeType> cmbTheme; 
     private JComboBox<BrushType> cmbBrush;
@@ -27,63 +27,79 @@ public class GUI{
     private GameBoard board;
     private ColorScanner colorScanner;
     private Color[][] colorMap;
-    private Color fgColor, bgColor, DARKBLUE, DARKESTBLUE, GREEN, RED, ORANGE, PURPLE, OFFWHITE, WHITE; 
+    private Color fgColor, bgColor, startColor, stopColor, continueColor, mainColor; 
     private Timer timer;
     private File gradientFile;
     private BrushType brush;
     private int rows, columns, scale, numIterations, delay; 
     private boolean timerState, brushState;
 
-
     /**
      * Constructor
      * Used to instantiate gui components.
      */
     public GUI() {
-        // setup logical board
-        scale = 2;   
-        rows = 72 / scale;
-        columns = 128 / scale;
-        board = new GameBoard(rows, columns);
-
+        
         // setup time delay(ms)
         delay = 400;   
 
-        // setup grid color map
+        // setup color scanner
         colorScanner = ColorScanner.getColorScanner();
         
-        // setup preset colors
-        DARKBLUE = new Color(36, 41, 46);
-        DARKESTBLUE = new Color(31, 36, 40);
-        OFFWHITE = new Color(239, 242, 245);
-        WHITE = new Color(255, 255, 255);
-        GREEN = new Color(33, 255, 148);
-        RED = new Color(255, 94, 81);
-        ORANGE = new Color(255, 178, 67);
-        PURPLE = new Color(129, 67, 255);
-
-        fgColor = DARKESTBLUE;
-        bgColor = DARKBLUE;
+        // setup colors
+        fgColor = CustomColor.DARKESTBLUE;
+        bgColor = CustomColor.DARKBLUE;
+        startColor = CustomColor.GREEN;
+        stopColor = CustomColor.RED;
+        continueColor = CustomColor.ORANGE;
+        mainColor = CustomColor.PURPLE;
 
         // setup font
         FONT = new Font("Arial", Font.BOLD, 15);
 
+        // setup dimension
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int screenHeight = screenSize.height;
+        int screenWidth = screenSize.width;
+
+        // setup logical board
+        scale = 2;   
+        rows = (screenHeight - 50) / (10 * scale);
+        columns = (screenWidth) / (10 * scale);
+        board = new GameBoard(rows, columns);
+
         // setup frame
         frame = new JFrame(); 
         frame.setTitle("Conway's Game of Life");
-        frame.setSize(1600, 980);
+        frame.setSize(screenWidth, screenHeight);
         frame.setLocationRelativeTo(null);
         frame.setIconImage(new ImageIcon("design/icon.png").getImage());
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+        //frame.setUndecorated(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
-        // setup panels
-        gridPanel = new JPanel(new GridLayout(rows, columns));
-        gridPanel.setPreferredSize(new Dimension(1600, 900));
 
-        optionsPanel = new JPanel(new FlowLayout());
-        optionsPanel.setPreferredSize(new Dimension(200, 50));
+        // setup panels
+
+        JLayeredPane layeredPane = new JLayeredPane();
+
+        JPanel titlePanel = new JPanel();
+        titlePanel.setBackground(bgColor);
+
+        JPanel gamePanel = new JPanel();
+        
+        gridPanel = new JPanel(new GridLayout(rows, columns));
+        gridPanel.setPreferredSize(new Dimension(1920, 1030));
+
+        GridLayout gridLayout = new GridLayout(1, 11);
+        gridLayout.setHgap(10);
+        optionsPanel = new JPanel(gridLayout);
+        
+        optionsPanel.setPreferredSize(new Dimension(1920, 50));
 
         sliderPanel = new JPanel(new GridLayout(2, 1));
+
+        JLabel lblTitle = new JLabel("Move to back");
+        titlePanel.add(lblTitle, BorderLayout.CENTER);
 
         // set up grid components
         for(int i = 0; i < rows; i++) {
@@ -109,12 +125,12 @@ public class GUI{
                     timer.start();
                     timerState = false;
                     btnStart.setText("STOP");
-                    btnStart.setBackground(RED);
+                    btnStart.setBackground(stopColor);
                 } else {
                     timer.stop();
                     timerState = true;
                     btnStart.setText("CONTINUE");
-                    btnStart.setBackground(ORANGE);
+                    btnStart.setBackground(continueColor);
                 }
             }
         });
@@ -163,7 +179,7 @@ public class GUI{
         // preset combobox, draws preset structure on the grid
         cmbBrush = new JComboBox<BrushType>(BrushType.values());
         cmbBrush.setFont(FONT);
-        cmbBrush.setForeground(PURPLE);
+        cmbBrush.setForeground(mainColor);
         cmbBrush.addActionListener(new AbstractAction(){
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -198,7 +214,7 @@ public class GUI{
         lblNumIterations = new JLabel("" + numIterations);
         lblNumIterations.setPreferredSize(new Dimension(100, 30));
         lblNumIterations.setFont(new Font("Arial", Font.BOLD, 30));
-        lblNumIterations.setForeground(PURPLE);
+        lblNumIterations.setForeground(mainColor);
         lblNumIterations.setHorizontalAlignment(0);
 
         //theme label
@@ -209,14 +225,27 @@ public class GUI{
         // theme combobox, used to change themes for the application
         cmbTheme = new JComboBox<ThemeType>(ThemeType.values());
         cmbTheme.setFont(FONT);
-        cmbTheme.setForeground(PURPLE);
+        cmbTheme.setForeground(mainColor);
         cmbTheme.addActionListener(new AbstractAction(){
             @Override
             public void actionPerformed(ActionEvent e) {
                 @SuppressWarnings("unchecked") JComboBox<ThemeType> box = (JComboBox<ThemeType>)e.getSource();
                 ThemeType selectedTheme = (ThemeType)box.getSelectedItem();
                 changeTheme(selectedTheme);
-        }
+            }
+        });
+
+        // quit button, used to close the application.
+        btnQuit = new JButton("QUIT");
+        btnQuit.setFont(FONT);
+        btnQuit.setPreferredSize(new Dimension(100, 30));
+        btnQuit.setBorderPainted(false);
+        btnQuit.setBackground(stopColor);
+        btnQuit.addActionListener(new AbstractAction(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose();
+            }
         });
 
         // default theme is dark
@@ -233,10 +262,17 @@ public class GUI{
         optionsPanel.add(lblNumIterations);
         optionsPanel.add(lblTheme);
         optionsPanel.add(cmbTheme);
+        optionsPanel.add(btnQuit);
 
         // add panels to the frame
-        frame.add(gridPanel, BorderLayout.CENTER);
-        frame.add(optionsPanel, BorderLayout.SOUTH);
+        gamePanel.add(gridPanel, BorderLayout.CENTER);
+        gamePanel.add(optionsPanel, BorderLayout.SOUTH);
+
+        layeredPane.add(gamePanel, 1);
+        layeredPane.add(titlePanel, 2);
+        
+
+        frame.add(layeredPane);
 
         frame.setVisible(true); 
     }
@@ -271,22 +307,20 @@ public class GUI{
         switch (theme) {
             case DARK: {
                 // dark theme
-                fgColor = DARKESTBLUE;
-                bgColor = DARKBLUE;
+                fgColor = CustomColor.DARKESTBLUE;
+                bgColor = CustomColor.DARKBLUE;
                 gradientFile = new File("design/gradient-dark.png");
+                break;
+            } case FLAT: {
+                // flat theme
+                fgColor = CustomColor.WHITE;
+                bgColor = CustomColor.OFFWHITE;
+                gradientFile = new File("design/flat.png");
                 break;
             } case LIGHT: {
                 // light theme
-                fgColor = WHITE;
-                bgColor = OFFWHITE;
-                GREEN = new Color(11, 206, 112);
-                gradientFile = new File("design/gradient-light.png");
-                break;
-            } case DEFAULT: { // fix this later
-                // light theme
-                fgColor = WHITE;
-                bgColor = OFFWHITE;
-                GREEN = new Color(11, 206, 112);
+                fgColor = CustomColor.WHITE;
+                bgColor = CustomColor.OFFWHITE;
                 gradientFile = new File("design/gradient-light.png");
                 break;
             }
@@ -301,26 +335,31 @@ public class GUI{
         optionsPanel.setBackground(fgColor);
         sliderPanel.setBackground(fgColor);
 
-        btnStart.setBackground(GREEN);
+        btnStart.setBackground(startColor);
         btnStart.setForeground(fgColor);
 
-        btnStep.setBackground(PURPLE);
+        btnStep.setBackground(mainColor);
         btnStep.setForeground(fgColor);
         
-        btnReset.setBackground(PURPLE);
+        btnReset.setBackground(mainColor);
         btnReset.setForeground(fgColor);
 
-        btnRandom.setBackground(PURPLE);
+        btnRandom.setBackground(mainColor);
         btnRandom.setForeground(fgColor);
 
-        lblSpeed.setForeground(PURPLE);
+        lblSpeed.setForeground(mainColor);
         sdrSpeed.setBackground(fgColor);
 
-        btnBrush.setBackground(PURPLE);
+        cmbBrush.setBackground(fgColor);
+        cmbTheme.setBackground(fgColor);
+
+        btnBrush.setBackground(mainColor);
         btnBrush.setForeground(fgColor);
 
         lblTheme.setBackground(bgColor);
-        lblTheme.setForeground(PURPLE);
+        lblTheme.setForeground(mainColor);
+
+        btnQuit.setForeground(fgColor);
         
         // edit node colors
         for(int i = 0; i < rows; i++) {
@@ -336,6 +375,15 @@ public class GUI{
         }
     }
 
+    /**
+     * DrawPreset
+     * Draws the preset structure on the grid, the location of the mouse is the
+     * top left corner of the preset structure.
+     * 
+     * @param pt        the preset structure to draw
+     * @param row       the row index to start drawing at
+     * @param column    the column index to start drawing at
+     */
     public void drawPreset(BrushType pt, int row, int column) {
         board.clear();
         board.preset(pt, brushState, row, column);
@@ -414,10 +462,10 @@ public class GUI{
 
             // style
             btnStart.setText("START");
-            btnStart.setBackground(GREEN);
-            btnStep.setBackground(PURPLE);
-            btnRandom.setBackground(PURPLE);
-            btnBrush.setBackground(PURPLE);
+            btnStart.setBackground(startColor);
+            btnStep.setBackground(mainColor);
+            btnRandom.setBackground(mainColor);
+            btnBrush.setBackground(mainColor);
             lblNumIterations.setText("" + numIterations);
         }
     }

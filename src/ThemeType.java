@@ -5,7 +5,7 @@
  */
 
 public enum ThemeType {
-    DEFAULT,
     LIGHT,
-    DARK
+    DARK,
+    FLAT
 }

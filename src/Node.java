@@ -27,7 +27,6 @@ public class Node extends JButton{
         return str;
     }
     public boolean getState() { return state; }
-    public void setState(boolean state) { this.state = state; };
+    public void setState(boolean state) { this.state = state; }
     public int[] getCoords() { return coords; }
-
  }
