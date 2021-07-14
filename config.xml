@@ -2,9 +2,9 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>C:\Users\Damon\Documents\GitHub\conways-game-of-life\conways-game-of-life.jar</jar>
-  <outfile>C:\Users\Damon\Documents\GitHub\conways-game-of-life\Conway&apos;s Game of Life.exe</outfile>
-  <errTitle>Must have JRE 8</errTitle>
+  <jar>C:\Users\Damon\Documents\GitHub\conways-game-of-life-app\conways-game-of-life-app.jar</jar>
+  <outfile>C:\Users\Damon\Documents\GitHub\conways-game-of-life-app\Conway&apos;s Game of Life.exe</outfile>
+  <errTitle>Download the latest JDK</errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>
   <priority>normal</priority>
@@ -13,7 +13,7 @@
   <stayAlive>false</stayAlive>
   <restartOnCrash>false</restartOnCrash>
   <manifest></manifest>
-  <icon>C:\Users\Damon\Documents\GitHub\conways-game-of-life\design\icon.ico</icon>
+  <icon>C:\Users\Damon\Documents\GitHub\conways-game-of-life-app\design\icon.ico</icon>
   <jre>
     <path></path>
     <bundledJre64Bit>false</bundledJre64Bit>

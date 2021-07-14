@@ -16,7 +16,7 @@ import javax.swing.event.ChangeListener;
 public class GUI extends JFrame{
 
     // Fields
-    private JPanel gridPanel, optionsPanel, sliderPanel;
+    private JPanel GRID_PANEL, OPTIONS_PANEL, SLIDER_PANEL;
     private JLabel lblNumIterations, lblSpeed, lblTheme;
     private JButton btnStart, btnReset, btnStep, btnRandom, btnBrush, btnQuit;
     private JSlider sdrSpeed;
@@ -24,11 +24,11 @@ public class GUI extends JFrame{
     private JComboBox<BrushType> cmbBrush;
     private Font font;
     private GameBoard board;
+    private File file;
     private ColorScanner colorScanner;
     private Color[][] colorMap;
     private Color fgColor, bgColor, startColor, stopColor, continueColor, mainColor; 
     private Timer timer;
-    private File gradientFile;
     private BrushType brush;
     private int rows, columns, scale, numIterations, delay; 
     private boolean timerState, brushState;
@@ -69,20 +69,20 @@ public class GUI extends JFrame{
         setUndecorated(true);
 
         // setup panels
-        gridPanel = new JPanel(new GridLayout(rows, columns));
-        gridPanel.setPreferredSize(new Dimension(1920, 1020));
+        GRID_PANEL = new JPanel(new GridLayout(rows, columns));
+        GRID_PANEL.setPreferredSize(new Dimension(1920, 1020));
 
-        optionsPanel = new JPanel();
-        optionsPanel.setPreferredSize(new Dimension(1920, 50));
+        OPTIONS_PANEL = new JPanel();
+        OPTIONS_PANEL.setPreferredSize(new Dimension(1920, 50));
 
-        sliderPanel = new JPanel(new GridLayout(2, 1));
+        SLIDER_PANEL = new JPanel(new GridLayout(2, 1));
 
         // set up grid components
         for(int i = 0; i < rows; i++) {
             for(int j = 0; j < columns; j++) {
                 Node node = board.getNode(i, j);
                 node.addActionListener(new MyGridListener());
-                gridPanel.add(node);
+                GRID_PANEL.add(node);
             }
         }
 
@@ -154,7 +154,6 @@ public class GUI extends JFrame{
         // preset combobox, draws preset structure on the grid
         cmbBrush = new JComboBox<BrushType>(BrushType.values());
         cmbBrush.setFont(font);
-        cmbBrush.setForeground(mainColor);
         cmbBrush.addActionListener(new AbstractAction(){
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -182,14 +181,13 @@ public class GUI extends JFrame{
         });
 
         // add slider components to slider panel
-        sliderPanel.add(lblSpeed);
-        sliderPanel.add(sdrSpeed);
+        SLIDER_PANEL.add(lblSpeed);
+        SLIDER_PANEL.add(sdrSpeed);
 
         // number of iterations label, used to display the current number of iterations
         lblNumIterations = new JLabel("" + numIterations);
         lblNumIterations.setPreferredSize(new Dimension(100, 30));
         lblNumIterations.setFont(new Font("Arial", Font.BOLD, 30));
-        lblNumIterations.setForeground(mainColor);
         lblNumIterations.setHorizontalAlignment(0);
 
         //theme label
@@ -200,7 +198,6 @@ public class GUI extends JFrame{
         // theme combobox, used to change themes for the application
         cmbTheme = new JComboBox<ThemeType>(ThemeType.values());
         cmbTheme.setFont(font);
-        cmbTheme.setForeground(mainColor);
         cmbTheme.addActionListener(new AbstractAction(){
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -210,9 +207,7 @@ public class GUI extends JFrame{
             }
         });
 
-        
-
-        // quit
+        // quit button, closes the application
         btnQuit = new JButton("QUIT");
         btnQuit.setFont(font);
         btnQuit.setPreferredSize(new Dimension(100, 30));
@@ -224,27 +219,26 @@ public class GUI extends JFrame{
             }
         });
 
-
         // default theme is dark
         changeTheme(ThemeType.LIGHT);
 
         // add options components to options panel
-        optionsPanel.add(btnStart);
-        optionsPanel.add(btnStep);
-        optionsPanel.add(btnReset);
-        optionsPanel.add(btnRandom);
-        optionsPanel.add(btnBrush);
-        optionsPanel.add(cmbBrush);
-        optionsPanel.add(sliderPanel);
-        optionsPanel.add(lblNumIterations);
-        optionsPanel.add(lblTheme);
-        optionsPanel.add(cmbTheme);
-        optionsPanel.add(btnQuit);
-        optionsPanel.add(btnQuit);
+        OPTIONS_PANEL.add(btnStart);
+        OPTIONS_PANEL.add(btnStep);
+        OPTIONS_PANEL.add(btnReset);
+        OPTIONS_PANEL.add(btnRandom);
+        OPTIONS_PANEL.add(btnBrush);
+        OPTIONS_PANEL.add(cmbBrush);
+        OPTIONS_PANEL.add(SLIDER_PANEL);
+        OPTIONS_PANEL.add(lblNumIterations);
+        OPTIONS_PANEL.add(lblTheme);
+        OPTIONS_PANEL.add(cmbTheme);
+        OPTIONS_PANEL.add(btnQuit);
+        OPTIONS_PANEL.add(btnQuit);
 
         // add panels to the frame
-        add(gridPanel, BorderLayout.CENTER);
-        add(optionsPanel, BorderLayout.SOUTH);
+        add(GRID_PANEL, BorderLayout.CENTER);
+        add(OPTIONS_PANEL, BorderLayout.SOUTH);
         setVisible(true); 
     }
 
@@ -274,37 +268,32 @@ public class GUI extends JFrame{
      */
     public void changeTheme(ThemeType theme) {
 
-        // set foreground and background colors
         switch (theme) {
             case DARK: {
                 // dark theme
                 fgColor = CustomColor.DARKESTBLUE;
                 bgColor = CustomColor.DARKBLUE;
-                gradientFile = new File("design/gradient-dark.png");
-                break;
-            } case FLAT: {
-                // flat theme
-                fgColor = CustomColor.WHITE;
-                bgColor = CustomColor.OFFWHITE;
-                gradientFile = new File("design/flat.png");
+                mainColor = CustomColor.AQUA;
+                file = new File("design/gradient-dark.png");
                 break;
             } case LIGHT: {
                 // light theme
                 fgColor = CustomColor.WHITE;
                 bgColor = CustomColor.OFFWHITE;
-                gradientFile = new File("design/gradient-light.png");
+                mainColor = CustomColor.PURPLE;
+                file = new File("design/gradient-light.png");
                 break;
             }
         }
 
         // generate color map for background
-        colorScanner.scan(gradientFile, scale);
+        colorScanner.scan(file, scale);
         colorMap = colorScanner.getColorMap();
 
         // edit component colors
-        gridPanel.setBackground(fgColor);
-        optionsPanel.setBackground(fgColor);
-        sliderPanel.setBackground(fgColor);
+        GRID_PANEL.setBackground(fgColor);
+        OPTIONS_PANEL.setBackground(fgColor);
+        SLIDER_PANEL.setBackground(fgColor);
 
         btnQuit.setBackground(stopColor);
         btnQuit.setForeground(fgColor);
@@ -323,9 +312,14 @@ public class GUI extends JFrame{
 
         lblSpeed.setForeground(mainColor);
         sdrSpeed.setBackground(fgColor);
+        
+        lblNumIterations.setForeground(mainColor);
 
         cmbBrush.setBackground(fgColor);
+        cmbBrush.setForeground(mainColor);
+
         cmbTheme.setBackground(fgColor);
+        cmbTheme.setForeground(mainColor);
 
         btnBrush.setBackground(mainColor);
         btnBrush.setForeground(fgColor);

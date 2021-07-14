@@ -69,13 +69,13 @@ public class GameBoard {
      * Preset
      * This method draws a preset structure based on the parameter BrushType.
      * 
-     * @param preset    the structure to draw.
+     * @param bt            the structure to draw.
      * @param brushState    true for paint, false for erase
      * @param row           the row to start
      * @param column        the column to start
      */
-    public void preset(BrushType pt, boolean brushState, int row, int column) {
-        int[][] structure = pt.getStructure();
+    public void preset(BrushType bt, boolean brushState, int row, int column) {
+        int[][] structure = bt.getStructure();
         int structureRows = structure.length;
         int structureColumns = structure[0].length;
         Node node;

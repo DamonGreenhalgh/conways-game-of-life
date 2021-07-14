@@ -17,4 +17,5 @@ public class CustomColor{
     public static Color RED = new Color(255, 94, 81);
     public static Color ORANGE = new Color(255, 178, 67);
     public static Color PURPLE = new Color(129, 67, 255);
+    public static Color AQUA = new Color(16, 249, 208);
 }
