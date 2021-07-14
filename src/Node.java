@@ -12,6 +12,7 @@ public class Node extends JButton{
     // Fields
     private boolean state = false;    
     private int[] coords; 
+    public static int size = 22;
 
     // Constructor
     public Node(int[] coords) { this.coords = coords; }
