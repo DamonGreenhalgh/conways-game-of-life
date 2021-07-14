@@ -13,17 +13,16 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class GUI{
+public class GUI extends JFrame{
 
     // Fields
-    private JFrame frame;
     private JPanel gridPanel, optionsPanel, sliderPanel;
     private JLabel lblNumIterations, lblSpeed, lblTheme;
     private JButton btnStart, btnReset, btnStep, btnRandom, btnBrush, btnQuit;
     private JSlider sdrSpeed;
     private JComboBox<ThemeType> cmbTheme; 
     private JComboBox<BrushType> cmbBrush;
-    private Font FONT;
+    private Font font;
     private GameBoard board;
     private ColorScanner colorScanner;
     private Color[][] colorMap;
@@ -40,9 +39,6 @@ public class GUI{
      */
     public GUI() {
         
-        // setup time delay(ms)
-        delay = 400;   
-
         // setup color scanner
         colorScanner = ColorScanner.getColorScanner();
         
@@ -55,51 +51,31 @@ public class GUI{
         mainColor = CustomColor.PURPLE;
 
         // setup font
-        FONT = new Font("Arial", Font.BOLD, 15);
-
-        // setup dimension
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int screenHeight = screenSize.height;
-        int screenWidth = screenSize.width;
+        font = new Font("Arial", Font.BOLD, 15);
 
         // setup logical board
-        scale = 2;   
-        rows = (screenHeight - 50) / (10 * scale);
-        columns = (screenWidth) / (10 * scale);
+        scale = 1;   
+        rows = 51 / scale;    
+        columns = 96 / scale;       
         board = new GameBoard(rows, columns);
 
         // setup frame
-        frame = new JFrame(); 
-        frame.setTitle("Conway's Game of Life");
-        frame.setSize(screenWidth, screenHeight);
-        frame.setLocationRelativeTo(null);
-        frame.setIconImage(new ImageIcon("design/icon.png").getImage());
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
-        //frame.setUndecorated(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setTitle("Conway's Game of Life");
+        setSize(1920, 1080);
+        setLocationRelativeTo(null);
+        setIconImage(new ImageIcon("design/icon.png").getImage());
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setExtendedState(JFrame.MAXIMIZED_BOTH); 
+        setUndecorated(true);
 
         // setup panels
-
-        JLayeredPane layeredPane = new JLayeredPane();
-
-        JPanel titlePanel = new JPanel();
-        titlePanel.setBackground(bgColor);
-
-        JPanel gamePanel = new JPanel();
-        
         gridPanel = new JPanel(new GridLayout(rows, columns));
-        gridPanel.setPreferredSize(new Dimension(1920, 1030));
+        gridPanel.setPreferredSize(new Dimension(1920, 1020));
 
-        GridLayout gridLayout = new GridLayout(1, 11);
-        gridLayout.setHgap(10);
-        optionsPanel = new JPanel(gridLayout);
-        
+        optionsPanel = new JPanel();
         optionsPanel.setPreferredSize(new Dimension(1920, 50));
 
         sliderPanel = new JPanel(new GridLayout(2, 1));
-
-        JLabel lblTitle = new JLabel("Move to back");
-        titlePanel.add(lblTitle, BorderLayout.CENTER);
 
         // set up grid components
         for(int i = 0; i < rows; i++) {
@@ -110,13 +86,12 @@ public class GUI{
             }
         }
 
-        // setup options components
         // start button, used to start/stop/continue the simulation
         btnStart = new JButton("START");
         btnStart.setPreferredSize(new Dimension(200, 30));
-        btnStart.setFont(FONT);
+        btnStart.setFont(font);
         btnStart.setBorderPainted(false);
-        timer = new Timer(delay, new MyStepListener());
+        timer = new Timer(400, new MyStepListener());
         timerState = true;
         btnStart.addActionListener(new AbstractAction(){
             @Override
@@ -138,21 +113,21 @@ public class GUI{
         // reset button, used to clear the board and reset the number of iterations
         btnReset = new JButton("RESET");
         btnReset.setPreferredSize(new Dimension(100, 30));
-        btnReset.setFont(FONT);
+        btnReset.setFont(font);
         btnReset.setBorderPainted(false);
         btnReset.addActionListener(new MyClearListener());
 
         // step button, used to generate the next step of the algorithm
         btnStep = new JButton("STEP");
         btnStep.setPreferredSize(new Dimension(100, 30));
-        btnStep.setFont(FONT);
+        btnStep.setFont(font);
         btnStep.setBorderPainted(false);
         btnStep.addActionListener(new MyStepListener());
 
         // random button, randomzes each node on the board
         btnRandom = new JButton("RANDOM");
         btnRandom.setPreferredSize(new Dimension(150, 30));
-        btnRandom.setFont(FONT);
+        btnRandom.setFont(font);
         btnRandom.setBorderPainted(false);
         btnRandom.addActionListener(new MyRandomListener());
 
@@ -161,7 +136,7 @@ public class GUI{
         brush = BrushType.SINGLE;
         btnBrush = new JButton("BRUSH");
         btnBrush.setPreferredSize(new Dimension(120, 30));
-        btnBrush.setFont(FONT);
+        btnBrush.setFont(font);
         btnBrush.setBorderPainted(false);
         btnBrush.addActionListener(new AbstractAction(){
             @Override
@@ -178,7 +153,7 @@ public class GUI{
 
         // preset combobox, draws preset structure on the grid
         cmbBrush = new JComboBox<BrushType>(BrushType.values());
-        cmbBrush.setFont(FONT);
+        cmbBrush.setFont(font);
         cmbBrush.setForeground(mainColor);
         cmbBrush.addActionListener(new AbstractAction(){
             @Override
@@ -192,7 +167,7 @@ public class GUI{
         // speed label
         lblSpeed = new JLabel("SPEED: 1x");
         lblSpeed.setPreferredSize(new Dimension(200, 10));
-        lblSpeed.setFont(FONT);
+        lblSpeed.setFont(font);
         lblSpeed.setHorizontalAlignment(0);
 
         // speed slider
@@ -220,11 +195,11 @@ public class GUI{
         //theme label
         lblTheme = new JLabel("THEME: ");
         lblTheme.setPreferredSize(new Dimension(70, 30));
-        lblTheme.setFont(FONT);
+        lblTheme.setFont(font);
         
         // theme combobox, used to change themes for the application
         cmbTheme = new JComboBox<ThemeType>(ThemeType.values());
-        cmbTheme.setFont(FONT);
+        cmbTheme.setFont(font);
         cmbTheme.setForeground(mainColor);
         cmbTheme.addActionListener(new AbstractAction(){
             @Override
@@ -235,18 +210,20 @@ public class GUI{
             }
         });
 
-        // quit button, used to close the application.
+        
+
+        // quit
         btnQuit = new JButton("QUIT");
-        btnQuit.setFont(FONT);
+        btnQuit.setFont(font);
         btnQuit.setPreferredSize(new Dimension(100, 30));
         btnQuit.setBorderPainted(false);
-        btnQuit.setBackground(stopColor);
         btnQuit.addActionListener(new AbstractAction(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                frame.dispose();
+                dispose();
             }
         });
+
 
         // default theme is dark
         changeTheme(ThemeType.LIGHT);
@@ -263,18 +240,12 @@ public class GUI{
         optionsPanel.add(lblTheme);
         optionsPanel.add(cmbTheme);
         optionsPanel.add(btnQuit);
+        optionsPanel.add(btnQuit);
 
         // add panels to the frame
-        gamePanel.add(gridPanel, BorderLayout.CENTER);
-        gamePanel.add(optionsPanel, BorderLayout.SOUTH);
-
-        layeredPane.add(gamePanel, 1);
-        layeredPane.add(titlePanel, 2);
-        
-
-        frame.add(layeredPane);
-
-        frame.setVisible(true); 
+        add(gridPanel, BorderLayout.CENTER);
+        add(optionsPanel, BorderLayout.SOUTH);
+        setVisible(true); 
     }
 
     /**
@@ -335,6 +306,9 @@ public class GUI{
         optionsPanel.setBackground(fgColor);
         sliderPanel.setBackground(fgColor);
 
+        btnQuit.setBackground(stopColor);
+        btnQuit.setForeground(fgColor);
+
         btnStart.setBackground(startColor);
         btnStart.setForeground(fgColor);
 
@@ -359,7 +333,9 @@ public class GUI{
         lblTheme.setBackground(bgColor);
         lblTheme.setForeground(mainColor);
 
+        btnQuit.setBackground(stopColor);
         btnQuit.setForeground(fgColor);
+        
         
         // edit node colors
         for(int i = 0; i < rows; i++) {
